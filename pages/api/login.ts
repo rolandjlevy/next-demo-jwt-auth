@@ -16,6 +16,10 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | ErrorResponse>
 ) {
+  if (req.method?.toLocaleLowerCase() !== "post") {
+    return res.status(405).end();
+  }
+
   try {
     const { username, password } = req.body || {};
 
@@ -26,9 +30,11 @@ export default function handler(
         .status(400)
         .json({ error: "Username and password are required" });
     }
-    loggedIn = true; // this is the result of User.find({})s
+    loggedIn = true; // Result of User.find({})
 
     const token = jwt.sign({ username, loggedIn }, SECRET_KEY || "");
+
+    res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Path=/`);
 
     res.status(200).json({ token });
   } catch (error) {
