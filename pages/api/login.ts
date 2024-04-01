@@ -1,4 +1,3 @@
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
@@ -6,7 +5,6 @@ import 'dotenv/config';
 const SECRET_KEY = process.env.SECRET_KEY;
 
 type Data = {
-  message: string;
   token: string;
 };
 
@@ -27,7 +25,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data |
 
     const token = jwt.sign({ username, loggedIn }, SECRET_KEY || '');
 
-    res.status(200).json({ message: `user ${username} logged in successfully`, token });
+    res.json({ token });
 
   } catch (error) {
     console.error('Error in handling login:', error);
