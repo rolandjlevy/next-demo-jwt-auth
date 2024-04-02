@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface DecodedToken extends JwtPayload {
   username?: string;
@@ -9,7 +9,21 @@ interface DecodedToken extends JwtPayload {
 const BasicForm = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [message, setMessage] = useState<string>("Not logged in");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/auth");
+        const data = (await res.json()) || {};
+        setIsLoggedIn(data.isLoggedIn);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const login = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -24,14 +38,17 @@ const BasicForm = () => {
 
       const { token } = (await res.json()) || {};
 
+      setIsLoggedIn(false);
+
       if (token) {
         const json = jwt.decode(token) as DecodedToken;
-        setMessage(`Welcome ${json?.username ?? "user"}, you are logged in`);
+        setIsLoggedIn(true);
+        console.log(`Welcome ${json?.username ?? "user"}, you are logged in`);
       } else {
-        setMessage("Login failed. Please check your credentials.");
+        console.log("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      setMessage(
+      console.error(
         "An error occurred while processing your login. Please try again."
       );
     }
@@ -43,13 +60,15 @@ const BasicForm = () => {
       const res: any = await fetch("/api/logout");
       const data = (await res.json()) || {};
 
+      setIsLoggedIn(false);
+
       if (data) {
-        setMessage(`You are logged out`);
+        console.log(`You are logged out`);
       } else {
-        setMessage("Login failed. Please check your credentials.");
+        console.log("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      setMessage(
+      console.log(
         "An error occurred while trying to log out. Please try again."
       );
     }
@@ -72,7 +91,7 @@ const BasicForm = () => {
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="p-2 border border-gray-300 rounded-md"
           required
         />
 
@@ -83,17 +102,17 @@ const BasicForm = () => {
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="p-2 border border-gray-300 rounded-md"
           required
         />
 
         <button
           type="submit"
-          className={`w-full ${
+          className={`${
             isLoginButtonDisabled
               ? "bg-purple-300 border border-purple-500 cursor-not-allowed"
               : "bg-purple-500 border border-purple-500 hover:bg-purple-700"
-          } text-white font-bold py-2 px-4 shadow rounded`}
+          } text-white font-bold transition-colors py-2 px-4 shadow rounded`}
           onClick={login}
           disabled={isLoginButtonDisabled}
         >
@@ -101,15 +120,15 @@ const BasicForm = () => {
         </button>
         <button
           type="button"
-          className="w-full bg-transparent hover:bg-white text-purple-700 font-bold border border-purple-500 py-2 px-4 shadow rounded"
+          className="bg-transparent hover:bg-white text-purple-700 font-bold transition-colors border border-purple-500 py-2 px-4 shadow rounded"
           onClick={logout}
         >
           Logout
         </button>
-        <p>{message}</p>
+        <p>{`You are ${isLoggedIn ? "" : "NOT"} logged in`}</p>
         <Link
           href="/protected-middleware"
-          className="text-sky-500 hover:text-sky-700"
+          className="text-sky-500 transition-colors hover:text-sky-700"
         >
           visit protected page
         </Link>
