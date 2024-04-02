@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import jwt from "jsonwebtoken";
-import "dotenv/config";
 import { serialize } from "cookie";
+import "dotenv/config";
+import jwt from "jsonwebtoken";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -13,10 +13,10 @@ type ErrorResponse = {
   error: string;
 };
 
-export default function handler(
+const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data | ErrorResponse>
-) {
+) => {
   if (req.method?.toLocaleLowerCase() !== "post") {
     return res.status(405).end();
   }
@@ -24,16 +24,15 @@ export default function handler(
   try {
     const { username, password } = req.body || {};
 
-    let loggedIn = false;
+    let isLoggedIn = false;
 
     if (!username || !password) {
       const errorMessage = "Username and password are required";
       return res.status(400).json({ error: errorMessage });
     }
-    loggedIn = true; // Result of User.find({})
+    isLoggedIn = true; // Result of User.find({})
 
-    const token = jwt.sign({ username, loggedIn }, SECRET_KEY || "");
-
+    const token = jwt.sign({ username, isLoggedIn }, SECRET_KEY || "");
     const cookieOptions = { httpOnly: true, path: "/" };
     const serializedCookie = serialize("token", token, cookieOptions);
     res.setHeader("Set-Cookie", serializedCookie);
@@ -43,4 +42,6 @@ export default function handler(
     console.error("Error in handling login:", error);
     res.status(500).json({ error: "Server error" });
   }
-}
+};
+
+export default handler;

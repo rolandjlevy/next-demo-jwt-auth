@@ -19,9 +19,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 
   try {
     const decodedToken = jwt.verify(tokenFromCookie, SECRET_KEY || "") as {
-      loggedIn: boolean;
+      isLoggedIn: boolean;
     };
-    isLoggedIn = decodedToken.loggedIn;
+    isLoggedIn = decodedToken.isLoggedIn;
   } catch (err) {
     console.error(`Access denied: verification error: ${err}`);
   }
@@ -46,22 +46,3 @@ const ProtectedPage: React.FC<Props> = ({ token, isLoggedIn }) => {
 };
 
 export default ProtectedPage;
-
-// try {
-// const host = `http://${req.headers.host}`;
-// const fetchUrl = `${host}/api/token`;
-// const res = await fetch(fetchUrl);
-// const data = await res.json();
-// return {
-//   props: {
-//     token,
-//   },
-// };
-// } catch (error) {
-//   console.error('Error fetching data:', error);
-//   return {
-//     props: {
-//       token: '',
-//     },
-//   };
-// }
