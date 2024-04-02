@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { serialize } from "cookie";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -26,15 +27,16 @@ export default function handler(
     let loggedIn = false;
 
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({ error: "Username and password are required" });
+      const errorMessage = "Username and password are required";
+      return res.status(400).json({ error: errorMessage });
     }
     loggedIn = true; // Result of User.find({})
 
     const token = jwt.sign({ username, loggedIn }, SECRET_KEY || "");
 
-    res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Path=/`);
+    const cookieOptions = { httpOnly: true, path: "/" };
+    const serializedCookie = serialize("token", token, cookieOptions);
+    res.setHeader("Set-Cookie", serializedCookie);
 
     res.status(200).json({ token });
   } catch (error) {

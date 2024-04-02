@@ -76,7 +76,6 @@ const BasicForm = () => {
           Login
         </button>
         <Link href="/protected">visit protected</Link>
-        <Link href="/protected-ssr">visit protected SSR</Link>
       </form>
     </main>
   );

@@ -31,7 +31,3 @@ body {
     text-wrap: balance;
   }
 }
-
-form.login {
-  background-color: 'red !important';
-}
