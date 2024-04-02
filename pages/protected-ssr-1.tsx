@@ -1,7 +1,7 @@
-import { GetServerSideProps } from "next";
-import Link from "next/link";
-import { parse } from "cookie";
-import jwt from "jsonwebtoken";
+import { GetServerSideProps } from 'next';
+import Link from 'next/link';
+import { parse } from 'cookie';
+import jwt from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -11,14 +11,14 @@ type Props = {
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
-  req,
+  req
 }) => {
-  const cookies = parse(req.headers.cookie || "");
-  const tokenFromCookie = cookies.token || "";
+  const cookies = parse(req.headers.cookie || '');
+  const tokenFromCookie = cookies.token || '';
   let isLoggedIn = false;
 
   try {
-    const decodedToken = jwt.verify(tokenFromCookie, SECRET_KEY || "") as {
+    const decodedToken = jwt.verify(tokenFromCookie, SECRET_KEY || '') as {
       isLoggedIn: boolean;
     };
     isLoggedIn = decodedToken.isLoggedIn;
@@ -29,8 +29,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return {
     props: {
       token: tokenFromCookie,
-      isLoggedIn: isLoggedIn || false,
-    },
+      isLoggedIn: isLoggedIn || false
+    }
   };
 };
 

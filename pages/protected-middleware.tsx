@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 const ProtectedPage = () => {
   const { push } = useRouter();
@@ -9,14 +9,14 @@ const ProtectedPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/auth");
+        const res = await fetch('/api/auth');
         const { isLoggedIn } = (await res.json()) || {};
         if (!isLoggedIn) {
-          push("/");
+          push('/');
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        push("/");
+        console.error('Error fetching data:', error);
+        push('/');
       } finally {
         setLoading(false);
       }

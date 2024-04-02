@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { GetServerSideProps } from "next";
+import Link from 'next/link';
+import { GetServerSideProps } from 'next';
 
 type ProtectedPageProps = {
   isLoggedIn: boolean;
@@ -8,7 +8,7 @@ type ProtectedPageProps = {
 const ProtectedPage: React.FC<ProtectedPageProps> = ({ isLoggedIn }) => (
   <div>
     <h1>Protected Page</h1>
-    <p>You are {isLoggedIn ? "logged in" : "NOT logged in"}</p>
+    <p>You are {isLoggedIn ? 'logged in' : 'NOT logged in'}</p>
     <Link href="/">Home</Link>
   </div>
 );
@@ -19,16 +19,16 @@ export const getServerSideProps: GetServerSideProps<
   const host = `http://${req.headers.host}`;
   const res = await fetch(`${host}/api/auth`, {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
     },
-    credentials: "include",
+    credentials: 'include'
   });
   const data = (await res.json()) || {};
 
   return {
     props: {
-      isLoggedIn: data?.isLoggedIn,
-    },
+      isLoggedIn: data?.isLoggedIn
+    }
   };
 };
 

@@ -1,7 +1,9 @@
-import BasicForm from "@/components/BasicForm";
+import BasicForm from '@/components/BasicForm';
 
 export default function Home() {
   return (
-   <article><BasicForm /></article>
+    <article>
+      <BasicForm />
+    </article>
   );
 }

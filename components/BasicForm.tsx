@@ -1,22 +1,22 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface DecodedToken extends JwtPayload {
   username?: string;
 }
 
 const BasicForm = () => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("/api/auth");
+        const res = await fetch('/api/auth');
         const data = (await res.json()) || {};
         setIsLoggedIn(data.isLoggedIn);
       } catch (error) {
@@ -29,12 +29,12 @@ const BasicForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res: any = await fetch("/api/login", {
-        method: "POST",
+      const res: any = await fetch('/api/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password })
       });
       const { token } = (await res.json()) || {};
 
@@ -42,14 +42,14 @@ const BasicForm = () => {
 
       if (token) {
         const decodedToken = jwt.decode(token) as DecodedToken;
-        console.log(`${decodedToken?.username ?? "user"} logged in`);
+        console.log(`${decodedToken?.username ?? 'user'} logged in`);
         setIsLoggedIn(true);
       } else {
-        setError("Login failed. Please check your credentials.");
+        setError('Login failed. Please check your credentials.');
       }
     } catch (error) {
       setError(
-        "An error occurred while processing your login. Please try again."
+        'An error occurred while processing your login. Please try again.'
       );
     } finally {
       setLoading(false);
@@ -60,13 +60,13 @@ const BasicForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res: any = await fetch("/api/logout");
+      const res: any = await fetch('/api/logout');
       const data = (await res.json()) || {};
-      console.log(data ? "Logged out" : "Logout failed");
+      console.log(data ? 'Logged out' : 'Logout failed');
       setIsLoggedIn(false);
       setLoading(false);
     } catch (error) {
-      setError("An error occurred while trying to log out. Please try again.");
+      setError('An error occurred while trying to log out. Please try again.');
       setLoading(false);
     }
   };
@@ -86,7 +86,7 @@ const BasicForm = () => {
         className="flex flex-col min-w-64 space-y-2"
       >
         <header className="text-2xl text-left font-semibold">
-          Login{" "}
+          Login{' '}
           <span className="text-sm inline-block relative bottom-1.5">
             {isLoggedIn ? <>✅</> : <>✖️</>}
           </span>
@@ -117,8 +117,8 @@ const BasicForm = () => {
           type="submit"
           className={`${
             isLoginButtonDisabled
-              ? "bg-purple-300 border border-purple-500 cursor-not-allowed"
-              : "bg-purple-500 border border-purple-500 hover:bg-purple-700"
+              ? 'bg-purple-300 border border-purple-500 cursor-not-allowed'
+              : 'bg-purple-500 border border-purple-500 hover:bg-purple-700'
           } text-white font-bold transition-colors py-2 px-4 shadow rounded`}
           onClick={login}
           disabled={isLoginButtonDisabled}
