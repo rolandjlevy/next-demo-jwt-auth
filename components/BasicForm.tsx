@@ -10,23 +10,24 @@ const BasicForm = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         const res = await fetch("/api/auth");
         const data = (await res.json()) || {};
         setIsLoggedIn(data.isLoggedIn);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        setError(`Error fetching data: ${error}`);
       }
-    };
-
-    fetchData();
+    })();
   }, []);
 
-  const login = async (e: { preventDefault: () => void }) => {
+  const login = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res: any = await fetch("/api/login", {
         method: "POST",
@@ -35,42 +36,38 @@ const BasicForm = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-
       const { token } = (await res.json()) || {};
 
       setIsLoggedIn(false);
 
       if (token) {
-        const json = jwt.decode(token) as DecodedToken;
+        const decodedToken = jwt.decode(token) as DecodedToken;
+        console.log(`${decodedToken?.username ?? "user"} logged in`);
         setIsLoggedIn(true);
-        console.log(`Welcome ${json?.username ?? "user"}, you are logged in`);
       } else {
-        console.log("Login failed. Please check your credentials.");
+        setError("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error(
+      setError(
         "An error occurred while processing your login. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
-  const logout = async (e: { preventDefault: () => void }) => {
+  const logout = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res: any = await fetch("/api/logout");
       const data = (await res.json()) || {};
-
+      console.log(data ? "Logged out" : "Logout failed");
       setIsLoggedIn(false);
-
-      if (data) {
-        console.log(`You are logged out`);
-      } else {
-        console.log("Login failed. Please check your credentials.");
-      }
+      setLoading(false);
     } catch (error) {
-      console.log(
-        "An error occurred while trying to log out. Please try again."
-      );
+      setError("An error occurred while trying to log out. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -78,12 +75,22 @@ const BasicForm = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24 bg-slate-100">
+      {loading ? (
+        <div className="flex justify-center absolute items-center h-24 w-24 animate-spin rounded-full border-4 border-t-purple-700"></div>
+      ) : (
+        <></>
+      )}
       <form
         action="/api/login"
         method="POST"
         className="flex flex-col min-w-64 space-y-2"
       >
-        <header className="text-2xl text-left font-semibold">Login</header>
+        <header className="text-2xl text-left font-semibold">
+          Login{" "}
+          <span className="text-sm inline-block relative bottom-1.5">
+            {isLoggedIn ? <>✅</> : <>✖️</>}
+          </span>
+        </header>
         <label htmlFor="username">Username:</label>
         <input
           type="text"
@@ -125,13 +132,15 @@ const BasicForm = () => {
         >
           Logout
         </button>
-        <p>{`You are ${isLoggedIn ? "" : "NOT"} logged in`}</p>
-        <Link
-          href="/protected-middleware"
-          className="text-sky-500 transition-colors hover:text-sky-700"
-        >
-          Visit protected page
+
+        <Link href="/protected-middleware" passHref>
+          <button className="text-sky-500 transition-colors hover:text-sky-700">
+            Visit protected page
+          </button>
         </Link>
+        {error ? (
+          <p className="text-red-600 text-base">Error: {error}</p>
+        ) : null}
       </form>
     </main>
   );
