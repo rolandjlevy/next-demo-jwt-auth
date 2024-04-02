@@ -130,7 +130,7 @@ const BasicForm = () => {
           href="/protected-middleware"
           className="text-sky-500 transition-colors hover:text-sky-700"
         >
-          visit protected page
+          Visit protected page
         </Link>
       </form>
     </main>
