@@ -1,4 +1,4 @@
-import { withAuth } from "../../middleware";
+import { withAuth } from "../../middleware/logged-in";
 
 const handler = (req: any, res: any) => {
   if (req.isLoggedIn) {

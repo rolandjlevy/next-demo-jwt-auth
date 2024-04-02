@@ -55,16 +55,16 @@ const BasicForm = () => {
     }
   };
 
+  const isLoginButtonDisabled = !username || !password;
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center p-24 bg-slate-100`}
-    >
+    <main className="flex min-h-screen flex-col items-center p-24 bg-slate-100">
       <form
         action="/api/login"
         method="POST"
-        className={`flex flex-col space-y-2`}
+        className="flex flex-col min-w-64 space-y-2"
       >
-        <header className={`text-2xl text-left font-semibold`}>Login</header>
+        <header className="text-2xl text-left font-semibold">Login</header>
         <label htmlFor="username">Username:</label>
         <input
           type="text"
@@ -72,7 +72,7 @@ const BasicForm = () => {
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className={`w-full p-2 border border-gray-300 rounded-md`}
+          className="w-full p-2 border border-gray-300 rounded-md"
           required
         />
 
@@ -83,33 +83,35 @@ const BasicForm = () => {
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={`w-full p-2 border border-gray-300 rounded-md`}
+          className="w-full p-2 border border-gray-300 rounded-md"
           required
         />
 
         <button
           type="submit"
-          className={`w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 shadow rounded`}
+          className={`w-full ${
+            isLoginButtonDisabled
+              ? "bg-purple-300 border border-purple-500 cursor-not-allowed"
+              : "bg-purple-500 border border-purple-500 hover:bg-purple-700"
+          } text-white font-bold py-2 px-4 shadow rounded`}
           onClick={login}
+          disabled={isLoginButtonDisabled}
         >
           Login
         </button>
         <button
           type="button"
-          className={`w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 shadow rounded`}
+          className="w-full bg-transparent hover:bg-white text-purple-700 font-bold border border-purple-500 py-2 px-4 shadow rounded"
           onClick={logout}
         >
           Logout
         </button>
         <p>{message}</p>
-        <Link href="/protected" className={`text-sky-500 hover:text-sky-700`}>
-          visit protected
-        </Link>
         <Link
           href="/protected-middleware"
-          className={`text-sky-500 hover:text-sky-700`}
+          className="text-sky-500 hover:text-sky-700"
         >
-          visit protected by middleware
+          visit protected page
         </Link>
       </form>
     </main>
