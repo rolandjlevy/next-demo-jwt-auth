@@ -1,16 +1,16 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 
-type Auth = {
+type AuthProps = {
   isLoggedIn: boolean;
 };
 
-export const getServerSideProps = (async ({ req }) => {
-  const host = `http://${req.headers.host}`;
-  const res = await fetch(`${host}/api/auth`);
-  const { isLoggedIn }: Auth = await res.json();
+export const getServerSideProps: GetServerSideProps<AuthProps> = async ({ req }) => {
+  const res = await fetch(`http://${req.headers.host}/api/auth`);
+  const data = await res.json();
+  const isLoggedIn: boolean = data.isLoggedIn;
   console.log('######### SSR 3 > isLoggedIn:', isLoggedIn);
   return { props: { isLoggedIn } };
-}) satisfies GetServerSideProps<{ isLoggedIn: Auth }>;
+};
 
 export default function ProtectedPage({
   isLoggedIn
